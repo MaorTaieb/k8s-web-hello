@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-hello-web1
+  namespace: test1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: k8s-hello-web1
+  template:
+    metadata:
+      labels:
+        app: k8s-hello-web1
+    spec:
+      containers:
+      - name: k8s-hello-web1
+        image: maortaieb/k8s-web-hello
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 3000
