@@ -26,11 +26,15 @@ pipeline {
                         error("❌ Minikube is not running. Please start it first.")
                     }
 
-                    // Set Docker environment for Minikube safely
-                    sh 'eval $(minikube -p minikube docker-env || echo "Minikube docker-env skipped")'
+                    // Capture Minikube Docker environment into a file
+                    sh 'minikube -p minikube docker-env --shell bash > /tmp/minikube_env.sh'
 
-                    // Build Docker image
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                    // Source the environment file and build Docker image in the same shell
+                    sh '''
+                        set -e
+                        source /tmp/minikube_env.sh
+                        docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    '''
                 }
             }
         }
