@@ -20,11 +20,17 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh '''
-                    #!/bin/bash
-                    eval $(minikube -p minikube docker-env)
-                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                    '''
+                    // Check Minikube status
+                    def minikubeStatus = sh(script: 'minikube -p minikube status --format="{{.Host}}"', returnStdout: true).trim()
+                    if (minikubeStatus != "Running") {
+                        error("❌ Minikube is not running. Please start it first.")
+                    }
+
+                    // Set Docker environment for Minikube safely
+                    sh 'eval $(minikube -p minikube docker-env || echo "Minikube docker-env skipped")'
+
+                    // Build Docker image
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 }
             }
         }
@@ -33,10 +39,17 @@ pipeline {
             steps {
                 script {
                     sh """
+                        # Create namespace if not exists
                         kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
+                        
+                        # Apply deployment and service
                         kubectl apply -f k8s/deployment.yaml
                         kubectl apply -f k8s/service.yaml
+                        
+                        # Update deployment image
                         kubectl set image deployment/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE_NAME}:${IMAGE_TAG} -n ${NAMESPACE} --record
+                        
+                        # Wait for rollout
                         kubectl rollout status deployment/${DEPLOYMENT} -n ${NAMESPACE} --timeout=120s
                     """
                 }
