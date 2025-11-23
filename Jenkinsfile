@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/MaorTaieb/k81-web-hello.git'
+                git branch: 'main', url: 'https://github.com/MaorTaieb/k8s-web-hello.git'
                 script {
                     env.IMAGE_TAG = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                 }
