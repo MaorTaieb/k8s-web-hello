@@ -4,7 +4,7 @@ metadata:
   name: k8s-hello-web1
   namespace: test1
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: k8s-hello-web1
