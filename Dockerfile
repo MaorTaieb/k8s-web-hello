@@ -8,7 +8,7 @@ WORKDIR /app
 # COPY . .
 
 # Expose port your app uses
-EXPOSE 3200
+EXPOSE 3000
 
 # Default command (adjust to your app)
 CMD ["node", "index.js"]  # or your app's startup command
