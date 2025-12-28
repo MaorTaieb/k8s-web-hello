@@ -8,6 +8,6 @@ spec:
   selector:
     app: k8s-hello-web1
   ports:
-  - port: 3100
-    targetPort: 3100
+  - port: 3200
+    targetPort: 3200
   
