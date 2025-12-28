@@ -9,5 +9,5 @@ spec:
     app: k8s-hello-web1
   ports:
   - port: 3200
-    targetPort: 3200
+    targetPort: 3000
   
